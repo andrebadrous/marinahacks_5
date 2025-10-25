@@ -8,7 +8,10 @@ hog_face_detector = dlib.get_frontal_face_detector()
 dlib_facelandmark = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
 
 while True:
-    _, frame = capture.read()
+    isTrue, frame = capture.read()
+    if not isTrue:
+        break
+
     gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
 
     faces = hog_face_detector(gray)
@@ -23,8 +26,7 @@ while True:
 
     cv.imshow("Face Landmarks", frame)
 
-    key = cv.waitKey(1)
-    if key == 27:
+    if cv.waitKey(25) & 0xFF == ord('q'):
         break
 
 capture.release()

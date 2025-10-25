@@ -1,7 +1,7 @@
 # marinahacks_5
 This repository contains the project coded during the marina hacks 5.0
 
-Names: Andre Baderous, Aayush Roy, Hayden Chelstorm
+Names: Andre Badrous, Aayush Roy, Hayden Chelstorm
 -> Aiming for Best Overall and Best Technical
 Topic: Facial Recognition Event Based Application
 

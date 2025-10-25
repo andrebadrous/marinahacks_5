@@ -26,7 +26,7 @@ while True:
 
     cv.imshow("Face Landmarks", frame)
 
-    if cv.waitKey(25) & 0xFF == ord('q'):
+    if cv.waitKey(1) & 0xFF == ord('q'):
         break
 
 capture.release()

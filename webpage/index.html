@@ -1,3 +1,14 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<link rel="stylesheet" href="style.css">
+<script type="module" src="script.js"></script>
+</head>
+
+<body>
+
+
 <!-- This the Navbar-->
     <nav class="navbar">
         <div class="nav-container">
@@ -5,9 +16,9 @@
             <div class="nav-center">
                 <ul class="nav-opts" id="navOpts">
                     <li><a href="#home" class="active">Home</a></li>
-                    <li><a href="#features">Features :D</a></li>
-                    <li><a href="#team">Team o.O</a></li>
-                    <li><a href="#guidelines">Guidelines D:</a></li>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#team">Team</a></li>
+                    <li><a href="#guidelines">Guidelines</a></li>
 
                 </ul>
                 
@@ -44,5 +55,25 @@
         <div>
             <h1>Guidelines</h1>
             <p class="section-info">Here lays all the guidelines for this factial recognition</p>
+            <!-- In Guidelines -->
+            <button id="startBtn">Start</button>
         </div>
     </section>
+   
+<!-- The App (put near the bottom of the page) -->
+<section id="app" style="display:block;">
+  <div class="app-grid">
+    <div class="pane">
+      <video id="camera" autoplay muted playsinline></video>
+    </div>
+    <div class="pane" style="text-align:center;">
+      <img id="expressionImage" alt="Detected" style="max-width:85%;border-radius:12px;" />
+      <div id="expressionLabel">—</div>
+    </div>
+  </div>
+  <canvas id="offscreen" width="320" height="240" style="display:none;"></canvas>
+</section>
+
+</body>
+    
+</html>

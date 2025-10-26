@@ -34,6 +34,29 @@ def frontal_face_detection():
 
     capture.release()
     cv.destroyAllWindows()
+    
+#implement how we will get the imported pictures for that facial expression
+#implement how default (prob do a socketio)
+
+def event_trig(p):
+    if p == 0:
+        return NotImplemented
+    
+    elif p == 1:
+        return NotImplemented
+    
+    elif p == 2:
+        return NotImplemented
+    
+    elif p == 3:
+        return NotImplemented
+
+    elif p == 4:
+        return NotImplemented
+    
+    elif p == 5:
+        return NotImplemented
+    
 
 def rescaleFrame(frame, scale=0.60) -> tuple:
     width = int(frame.shape[1] * scale)

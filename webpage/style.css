@@ -115,6 +115,14 @@
             padding: 0 20px;
         }
 
+        /* Fade out Guidelines on Start */
+        .fade-out { opacity: 0; transform: scale(.98) translateY(4px); transition: .35s ease; pointer-events:none; }
+
+        /* Simple 2-col layout */
+        .app-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+        .pane { border:1px solid #333; border-radius:14px; padding:10px; background:#111; }
+        #camera { width:100%; height:auto; background:#000; border-radius:10px; }
+
         /* Individual Section Colors */
         #home {
             background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);

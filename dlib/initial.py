@@ -10,13 +10,12 @@ def frontal_face_detection():
     hog_face_detector = dlib.get_frontal_face_detector()
 
     dlib_facelandmark = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
-    num = 0
     while True:
         isTrue, frame = capture.read()
         if not isTrue:
             break
 
-        frame = rescaleFrame(frame)
+        frame = rescaleFrame(frame, scale=1.5)
         gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
         faces = hog_face_detector(gray)
 

@@ -3,17 +3,21 @@ const EXPRESSIONS = ["sad","happy","confused","mad","freaky","relaxed","shocked"
 
 // Normalize backend labels -> your 7 buckets
 const LABEL_MAP = {
-  sad:"sad", happy:"happy", confused:"confused", mad:"mad", freaky:"freaky",relaxed:"relaxed", shocked:"shocked"
+  sad:"sad", happy:"happy", confused:"confused",
+  angry:"mad", mad:"mad",
+  disgust:"freaky", disgusted:"freaky", fear:"freaky", scared:"freaky",
+  neutral:"relaxed", relaxed:"relaxed",
+  surprised:"shocked", shock:"shocked", shocked:"shocked"
 };
 
-// Default monkey images (your folder structure)
+// Default monkey images (your folders)
 const MONKEY = {
   sad:      "/photos/default-monkey/monkey-sad.png",
-  happy:    "/photos/default-monkey/monkey-bruh.gif",
+  happy:    "/photos/default-monkey/monkeyhappy.png",
   confused: "/photos/default-monkey/monkey-thinking.png",
   mad:      "/photos/default-monkey/monkeymad.png",
   freaky:   "/photos/default-monkey/monkey-freaky.png",
-  relaxed:  "/photos/default-monkey/monkey-thinking.png",
+  relaxed:  "/photos/default-monkey/relaxed.png",
   shocked:  "/photos/default-monkey/monkey-bruh.gif",
 };
 const DEFAULT_MONKEY = "/photos/default-monkey/monkey-bruh.gif";
@@ -22,28 +26,35 @@ const DEFAULT_MONKEY = "/photos/default-monkey/monkey-bruh.gif";
 const PRESETS = {
   sad:      ["/photos/shrek-default/shrek-sad.png"],
   happy:    ["/photos/shrek-default/shrek-happy.png"],
-  confused: ["/photos/shrek-default/shrek-bruh.png"],
+  confused: ["/photos/shrek-default/shrek-confused.png"],
   mad:      ["/photos/shrek-default/shrek-mad.png"],
-  freaky:   ["/photos/shrek-default/shrek-bruh.png"],
-  relaxed:  ["/photos/shrek-default/shrek-rizzing.png"],
+  freaky:   ["/photos/shrek-default/shrek-rizzing.png"],
+  relaxed:  ["/photos/shrek-default/shrek-relaxed.png"],
   shocked:  ["/photos/shrek-default/shrek-bruh.png"],
 };
 
 // -------------------- LocalStorage helpers --------------------
-const UPLOAD_KEY = (n)=> `expr_upload_${n}`;   // dataURL for user upload
-const PRESET_KEY = (n)=> `expr_preset_${n}`;   // preset index as string
+const PRESET_NONE = -1;
+const UPLOAD_KEY = n => `expr_upload_${n}`;
+const PRESET_KEY = n => `expr_preset_${n}`;
 
-const getUpload = n => localStorage.getItem(UPLOAD_KEY(n));
-const setUpload = (n,d) => localStorage.setItem(UPLOAD_KEY(n), d);
-const clearUpload = n => localStorage.removeItem(UPLOAD_KEY(n));
+const getUpload     = n => localStorage.getItem(UPLOAD_KEY(n));
+const setUpload     = (n,d) => localStorage.setItem(UPLOAD_KEY(n), d);
+const clearUpload   = n => localStorage.removeItem(UPLOAD_KEY(n));
 
-const getPresetIndex = n => {
+// IMPORTANT FIX: treat null/""/"-1" as NO PRESET
+function getPresetIndex(n){
   const s = localStorage.getItem(PRESET_KEY(n));
-  const i = Number(s);
-  return Number.isInteger(i) ? i : -1;
-};
-const setPresetIndex = (n,i) => localStorage.setItem(PRESET_KEY(n), String(i));
-const clearPreset = n => localStorage.removeItem(PRESET_KEY(n));
+  if (s === null || s === "" || s === "-1") return PRESET_NONE;
+  const i = parseInt(s, 10);
+  return Number.isNaN(i) ? PRESET_NONE : i;
+}
+function setPresetIndex(n, i){
+  localStorage.setItem(PRESET_KEY(n), String(i));
+}
+function clearPreset(n){
+  localStorage.setItem(PRESET_KEY(n), String(PRESET_NONE)); // store -1 explicitly
+}
 
 // Resolve final image: upload > preset > monkey
 function imageFor(name){
@@ -71,12 +82,13 @@ function buildCustomizer(){
     const row = document.createElement("div"); row.className = "row";
 
     const select = document.createElement("select");
-    select.add(new Option("Default (Monkey)", "-1"));
+    select.add(new Option("Default (Monkey)", String(PRESET_NONE)));
     (PRESETS[name]||[]).forEach((url,i)=> select.add(new Option(`Preset ${i+1}`, String(i))));
     select.value = String(getPresetIndex(name));
     select.addEventListener("change", ()=>{
-      const idx = Number(select.value);
-      if (Number.isInteger(idx) && idx >= 0) setPresetIndex(name, idx); else clearPreset(name);
+      const idx = parseInt(select.value, 10);
+      if (Number.isInteger(idx) && idx >= 0) setPresetIndex(name, idx);
+      else setPresetIndex(name, PRESET_NONE);      // <- store -1, not remove
       if (!getUpload(name)) preview.src = imageFor(name);
     });
 
@@ -93,7 +105,10 @@ function buildCustomizer(){
     clearBtn.className="icon";
     clearBtn.textContent="Clear upload";
     clearBtn.title = "Remove your upload so preset/default applies";
-    clearBtn.addEventListener("click", ()=>{ clearUpload(name); preview.src = imageFor(name); });
+    clearBtn.addEventListener("click", ()=>{
+      clearUpload(name);
+      preview.src = imageFor(name);               // now correctly falls to Monkey
+    });
 
     row.append(select, upload, clearBtn);
     card.append(title, preview, row);
@@ -101,9 +116,13 @@ function buildCustomizer(){
   });
 
   document.getElementById("resetBtn")?.addEventListener("click", ()=>{
-    if(!confirm("Reset all expressions to Default (Monkey)?")) return;
-    EXPRESSIONS.forEach(n=>{ clearUpload(n); clearPreset(n); });
-    buildCustomizer();
+    // You can now cancel this (OK/Cancel) properly
+    if (!confirm("Reset all expressions to Default (Monkey)?")) return;
+    EXPRESSIONS.forEach(n=>{
+      clearUpload(n);
+      clearPreset(n);                              // sets -1
+    });
+    buildCustomizer();                             // rebuild previews = monkeys
   });
 }
 
@@ -121,7 +140,7 @@ const expressionLabel = document.getElementById("expressionLabel");
 const W = 320, H = 240;
 let sending = false, stream = null;
 
-const socket = io(); // same-origin Socket.IO
+const socket = io(); // same-origin
 
 function fadeOutGuidelines(){
   guidelinesCard?.classList.add("fade-out");
@@ -130,13 +149,13 @@ function fadeOutGuidelines(){
 
 async function startCamera(){
   try {
-    stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: false });
+    stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user", width: { ideal: 1280 }, height: { ideal: 720 } }, audio: false});
     videoEl.srcObject = stream;
     await videoEl.play();
     canvas.width = W; canvas.height = H;
     sending = true;
     socket.emit("start", { ts: Date.now() });
-    sendFrameLoop(); // kick off
+    sendFrameLoop();
   } catch (e) {
     console.error(e);
     alert("We couldn't access your camera. Please allow camera permissions and try again.");
@@ -148,7 +167,6 @@ function sendFrameLoop(){
   if (videoEl.readyState >= 2) {
     ctx.drawImage(videoEl, 0, 0, W, H);
     const jpeg = canvas.toDataURL("image/jpeg", 0.65);
-    // ACK-paced: send next only after server processes this one
     socket.emit("frame", { image: jpeg }, () => setTimeout(sendFrameLoop, 200)); // ~5 fps
   } else {
     requestAnimationFrame(sendFrameLoop);
@@ -162,7 +180,6 @@ function stopEverything(){
   videoEl.srcObject = null;
 }
 
-// Receive backend result -> map to UI bucket -> show image/label
 socket.on("expression", ({ expression, score })=>{
   const raw = (expression||"").toLowerCase().trim();
   const key = LABEL_MAP[raw] || "relaxed";
@@ -176,7 +193,6 @@ startBtn?.addEventListener("click", async ()=>{
 });
 stopBtn?.addEventListener("click", stopEverything);
 
-// Build customizer on load; set a visible default in expression pane
 document.addEventListener("DOMContentLoaded", ()=>{
   buildCustomizer();
   if (expressionImage && !expressionImage.src) expressionImage.src = DEFAULT_MONKEY;

@@ -140,6 +140,47 @@
             background: linear-gradient(135deg, #0a0a0a 0%, #2a2a2a 100%);
         }
 
+        /* Customizer (small) */
+        .customizer {
+             margin: 16px auto 6px; text-align: left; max-width: 1000px; 
+        }
+        .customizer-grid { 
+            display: grid; grid-template-columns: repeat(3, minmax(220px, 1fr)); gap: 12px; 
+        }
+        .custom-card { 
+            border: 1px solid #333; border-radius: 14px; padding: 10px; background: rgba(255,255,255,.03); 
+        }
+        .custom-card h4 { 
+            margin-bottom: 6px;
+        }
+        .preview { 
+            width: 100%; height: 150px; object-fit: cover; background: #111; border: 1px dashed #444; border-radius: 10px; margin-bottom: 6px; 
+        }
+        .row { 
+            display: flex; gap: 8px; align-items: center; 
+        }
+        button.icon { 
+            padding: 8px 10px; border-radius: 8px; border: 1px solid #444; background: transparent; color: #fff; 
+        }
+
+        /* Navbar logo sizing */
+        .navbar { --nav-h: 56px; }           /* set your bar height */
+        .navbar .logo img {
+        height: calc(var(--nav-h) - 16px); /* fits inside bar with a little padding */
+        width: auto;                        /* keep aspect ratio */
+        display: block;                     /* remove inline gap */
+        object-fit: contain;                /* no stretching */
+        }
+
+        /* (optional) tighten navbar padding if needed */
+        .navbar { padding: 8px 20px; }
+
+        /* (optional) smaller on mobile */
+        @media (max-width: 600px) {
+        .navbar { --nav-h: 48px; }
+        }
+
+
         /* Responsive Design */
         @media (max-width: 768px) {
             .navbar {
@@ -207,3 +248,89 @@
                 scroll-behavior: smooth;
             }
         }
+
+/* Let the app section fill the screen and place panels side-by-side */
+#app { scroll-margin-top: 100px; }            /* so anchors account for fixed navbar */
+
+.app-section { 
+  position: relative;
+  padding: 80px 20px 30px;                    /* space below navbar */
+}
+
+.app-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;             /* left/right */
+  gap: 24px;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  height: calc(100vh - 160px);                /* fill the page area */
+}
+
+.pane {
+  border: 1px solid #333;
+  border-radius: 16px;
+  background: rgba(255,255,255,.04);
+  height: 100%;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+}
+
+.pane-title {
+  font-size: 0.95rem;
+  opacity: .85;
+  margin-bottom: 8px;
+  border-bottom: 1px dashed #333;
+  padding-bottom: 6px;
+}
+
+.video-pane video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;                          /* fill nicely */
+  border-radius: 12px;
+  background: #000;
+}
+
+.result-pane {
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.expression-image {
+  max-width: 90%;
+  max-height: 70%;
+  border: 1px solid #333;
+  border-radius: 12px;
+  background: #111;
+  margin: 12px auto;
+}
+
+.expression-label {
+  font-size: 1.6rem;                          /* bigger label */
+  opacity: .9;
+}
+
+.controls {
+  position: absolute;                          /* float Stop button */
+  top: 16px;
+  right: 24px;
+}
+
+.btn-primary, .btn-secondary {
+  cursor: pointer;
+  padding: 10px 16px;
+  border-radius: 12px;
+  border: 1px solid #444;
+  font-weight: 700;
+}
+.btn-primary { background: #fff; color: #000; }
+.btn-secondary { background: transparent; color: #fff; }
+
+/* smaller on mobile */
+@media (max-width: 900px) {
+  .app-grid { grid-template-columns: 1fr; height: auto; }
+}
+

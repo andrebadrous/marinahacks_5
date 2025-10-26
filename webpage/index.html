@@ -1,3 +1,6 @@
+<link rel="stylesheet" href="/webpage/style.css" />
+<img src="/photos/logo/logo.png" alt="logo" />
+
 <!-- This the Navbar-->
     <nav class="navbar">
         <div class="nav-container">
@@ -9,7 +12,7 @@
                     <li><a href="#team">Team o.O</a></li>
                     <li><a href="#guidelines">Guidelines D:</a></li>
 
-                </ul>
+                </ul>   
                 
             </div>
         </div>
@@ -44,5 +47,41 @@
         <div>
             <h1>Guidelines</h1>
             <p class="section-info">Here lays all the guidelines for this factial recognition</p>
+            <div id="customizer" class="customizer">
+            <h3>Choose images per expression</h3>
+            <div id="customizerGrid" class="customizer-grid"></div>
+            <div class="customizer-actions">
+                <button id="resetBtn" class="btn-secondary">Reset all to Monkey</button>
+            </div>
+            </div>
+
+            <button id="startBtn" class="btn-primary">Start</button> 
+        </div>
+    </section> 
+
+
+    <!-- The App -->
+    <section id="app" class="section">
+        <div class="app-grid">
+            <div class="pane">
+            <div class="pane-title">Your Camera</div>
+            <video id="camera" autoplay muted playsinline></video>
+            </div>
+            <div class="pane" style="text-align:center;">
+            <div class="pane-title">Expression</div>
+            <img id="expressionImage" class="expression-image" alt="Detected" />
+            <div id="expressionLabel" class="expression-label">—</div>
+            </div>
+        </div>
+
+        <!-- hidden canvas -->
+        <canvas id="offscreen" width="320" height="240" style="display:none;"></canvas>
+
+        <div class="controls">
+            <button id="stopBtn" class="btn-secondary">Stop</button>
         </div>
     </section>
+
+    <!-- Socket.IO client -->
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js" crossorigin="anonymous"></script>
+    <script src="/webpage/script.js"></script>

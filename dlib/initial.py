@@ -36,7 +36,7 @@ def frontal_face_detection():
     capture.release()
     cv.destroyAllWindows()
 
-def rescaleFrame(frame, scale=0.60):
+def rescaleFrame(frame, scale=0.60) -> tuple:
     width = int(frame.shape[1] * scale)
     height = int(frame.shape[0] * scale)
 

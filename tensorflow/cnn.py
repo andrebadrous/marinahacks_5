@@ -4,26 +4,6 @@ import numpy as np
 # import keras
 import csv
 
-csv_files = [
-    "../data/confused.csv",
-    "../data/freaky.csv",
-    "../data/happy.csv",
-    "../data/mad.csv",
-    "../data/relaxed.csv",
-    "../data/sad.csv",
-    "../data/shocked.csv"
-]
-
-for index in csv_files:
-    with open(index, 'r') as file:
-        num_of_lines = 0
-        for line in file:
-            num_of_lines += 1
-            print(type(line[1]))
-            print(type(line[14]))
-        print(num_of_lines)
-        
-
 
 """
 confused = pd.read_csv(csv_files[0])
